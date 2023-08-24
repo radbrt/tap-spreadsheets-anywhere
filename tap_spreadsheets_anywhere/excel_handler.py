@@ -1,7 +1,7 @@
 import re
 import openpyxl
 import logging
-
+import urllib.request
 import xlrd
 
 LOGGER = logging.getLogger(__name__)
@@ -62,7 +62,11 @@ def get_legacy_row_iterator(table_spec, file_handle):
 
 
 def get_row_iterator(table_spec, file_handle):
-    workbook = openpyxl.load_workbook(file_handle, read_only=True)
+
+    local_filename, headers = urllib.request.urlretrieve(file_handle, filename="ets.xlsx")
+
+
+    workbook = openpyxl.load_workbook(local_filename, read_only=True)
     
     if "worksheet_name" in table_spec:
         try:

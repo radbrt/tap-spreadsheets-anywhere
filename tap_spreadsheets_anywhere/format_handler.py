@@ -7,6 +7,7 @@ import tap_spreadsheets_anywhere.json_handler
 import tap_spreadsheets_anywhere.jsonl_handler
 from azure.storage.blob import BlobServiceClient
 import os
+import urllib.request
 
 class InvalidFormatError(Exception):
     def __init__(self, fname, message="The file was not in the expected format"):
@@ -157,11 +158,11 @@ def get_row_iterator(table_spec, uri):
             reader = get_streamreader(uri, universal_newlines=universal_newlines, open_mode='r', encoding=encoding)
             iterator = tap_spreadsheets_anywhere.csv_handler.get_row_iterator(table_spec, reader)
         elif format == 'excel':
-            reader = get_streamreader(uri, universal_newlines=universal_newlines,newline=None, open_mode='rb')
+            # reader = get_streamreader_file(uri, universal_newlines=universal_newlines,newline=None, open_mode='rb')
             if uri.lower().endswith(".xls"):
                 iterator = tap_spreadsheets_anywhere.excel_handler.get_legacy_row_iterator(table_spec, reader)
             else:
-                iterator = tap_spreadsheets_anywhere.excel_handler.get_row_iterator(table_spec, reader)
+                iterator = tap_spreadsheets_anywhere.excel_handler.get_row_iterator(table_spec, uri)
         elif format == 'json':
             reader = get_streamreader(uri, universal_newlines=universal_newlines, open_mode='r', encoding=encoding)
             iterator = tap_spreadsheets_anywhere.json_handler.get_row_iterator(table_spec, reader)
