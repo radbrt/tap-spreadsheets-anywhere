@@ -3,6 +3,7 @@ import openpyxl
 import logging
 import urllib.request
 import xlrd
+import tempfile
 
 LOGGER = logging.getLogger(__name__)
 
