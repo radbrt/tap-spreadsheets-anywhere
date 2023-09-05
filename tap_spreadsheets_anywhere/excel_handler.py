@@ -61,12 +61,19 @@ def get_legacy_row_iterator(table_spec, file_handle):
     return generator_wrapper(sheet.get_rows())
 
 
+def get_workbook_via_tempfile(file_handle):
+    with tempfile.NamedTemporaryFile(mode='wb', suffix='.xlsx') as temp:
+        temp.write(file_handle)
+        temp.flush()
+        workbook = openpyxl.load_workbook(temp.name, read_only=True)
+        worksheets = workbook.worksheets
+        active_sheet = worksheets[0]
+        return active_sheet
+
+
 def get_row_iterator(table_spec, file_handle):
 
-    local_filename, headers = urllib.request.urlretrieve(file_handle, filename="ets.xlsx")
-
-
-    workbook = openpyxl.load_workbook(local_filename, read_only=True)
+    workbook = get_workbook_via_tempfile(file_handle)
     
     if "worksheet_name" in table_spec:
         try:
